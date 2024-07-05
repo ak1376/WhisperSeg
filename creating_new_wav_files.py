@@ -78,7 +78,7 @@ num_trials = 3
 # audio_file = '/home/akapoor/Desktop/llb16_0852_2018_05_08_08_28_04.wav'
 # audio, _ = librosa.load( audio_file, sr = sr )
 
-segmenter = WhisperSegmenterFast( "nccratliri/whisperseg-canary-ct2", device="cpu" )
+segmenter = WhisperSegmenterFast( "nccratliri/whisperseg-canary-ct2", device="cuda" )
 
 # Default values
 window_size = 15
@@ -90,7 +90,7 @@ feature_extractor = WhisperSegFeatureExtractor(sr, window_size / spec_width, min
 
 # I want to do this operation on all of Rose's data
 
-bird_paths = '/Users/AnanyaKapoor/Desktop/USA5207'
+bird_paths = '/home/akapoor/Desktop/USA5207'
 
 bird_filepaths = []
 
@@ -107,8 +107,9 @@ for bird_path in bird_filepaths:
 
     for filename in os.listdir(all_days):
         file_path = os.path.join(all_days, filename)
-        day_filepaths.append(file_path)
-
+        if os.path.isfile(file_path):  # Check if it's a file
+            day_filepaths.append(file_path)
+    
     # Extract bird name
     # Split the path by '/'
     parts = all_days.split('/')
@@ -152,7 +153,7 @@ for bird_path in bird_filepaths:
             # Display the plot
             plt.tight_layout()
 
-            parts = day_path.split('/')
+            parts = all_days.split('/')
             day_value = parts[-1]
 
             os.makedirs(f'png_files/{bird_name}/day_{day_value}', exist_ok=True)
@@ -178,51 +179,3 @@ for bird_path in bird_filepaths:
         os.makedirs(f'new_wav_files/{bird_name}/day_{day_value}', exist_ok=True)
 
         write(f'new_wav_files/{bird_name}/day_{day_value}/{last_part}', sr, silenced_audio)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# samples_onsets, samples_offsets = seg_jawn.segment_song(audio_file)
-
-# silenced_audio = seg_jawn.silencer(audio, samples_onsets, samples_offsets)
-
-# orig_spec = seg_jawn.create_sonogram(audio)
-# silenced_spec = seg_jawn.create_sonogram(silenced_audio)
-
-# # Plotting
-# import matplotlib.pyplot as plt
-# fig, axes = plt.subplots(2, 1, figsize=(10, 8))
-
-# # Original audio spectrogram
-# axes[0].imshow(orig_spec, origin='lower', cmap='viridis')
-# axes[0].set_title('Original Audio Spectrogram')
-# axes[0].set_xlabel('Time')
-# axes[0].set_ylabel('Frequency Bin')
-
-# # Silenced audio spectrogram
-# axes[1].imshow(silenced_spec, origin='lower', cmap='viridis')
-# axes[1].set_title('Silenced Audio Spectrogram')
-# axes[1].set_xlabel('Time')
-# axes[1].set_ylabel('Frequency Bin')
-
-# # Display the plot
-# plt.tight_layout()
-# plt.show()
